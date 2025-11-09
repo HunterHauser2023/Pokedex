@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { tss } from '../tss';
-import { useGetPokemons } from 'src/hooks/useGetPokemons';
+import { useGetPokemonDetails, useGetPokemons } from 'src/hooks/useGetPokemons';
+import { Modal } from "antd";
 
 export const PokemonListPage = () => {
   const { classes } = useStyles();
   const { data, loading, error } = useGetPokemons();
+  const { detailsData, detailsLoading, detailsError } = useGetPokemonDetails("");
   const [search, setSearch] = useState('');
 
   const filteredData = data?.filter((pokemon) =>

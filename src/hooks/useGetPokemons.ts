@@ -10,6 +10,11 @@ export interface Pokemon {
 
 export interface PokemonDetail extends Pokemon {
   // Details
+  captureRate?: string;
+  weight?: string;
+  height?: string;
+  baseStat?: string;
+  stat?: string;
 }
 
 export const GET_POKEMONS = gql`
@@ -99,5 +104,36 @@ export const useGetPokemons = (/* search?: string */): {
       ) ?? [],
     loading,
     error,
+  };
+};
+
+export const useGetPokemonDetails = (pokemonId: string): {
+  detailsData: PokemonDetail[];
+  detailsLoading: boolean;
+  detailsError: useQuery.Result['error'];
+} => {
+  const { data, loading, error } = useQuery<{ pokemonDetails: any[] }>(GET_POKEMON_DETAILS, {
+    variables: {
+      id: pokemonId, // `.*${id}.*`,
+    },
+  });
+
+  return {
+    detailsData:
+      data?.pokemonDetails?.map(
+        (p): PokemonDetail => ({
+          id: p.id,
+          name: p.pokemonspecy?.pokemonspeciesnames?.[0]?.name,
+          types: p.pokemontypes?.map((t: any) => t.type?.typenames?.[0]?.name),
+          sprite: p.pokemonsprites?.[0]?.sprites,
+          captureRate: p.pokemonspecy?.capture_rate,
+          weight: p.weight,
+          height: p.height,
+          baseStat: p.pokemonstats?.base_stat,
+          stat: p.pokemonstats?.stat?.name,
+        }),
+      ) ?? [],
+    detailsLoading: loading,
+    detailsError: error,
   };
 };
